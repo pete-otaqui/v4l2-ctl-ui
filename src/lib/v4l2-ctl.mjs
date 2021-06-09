@@ -12,7 +12,7 @@ export function validateDevice(device) {
   }
 }
 export function validateCtrl(ctrl) {
-  if (!ctrl.match(/^[a-z]+$/)) {
+  if (!ctrl.match(/^[a-z_]+$/)) {
     throw new RangeError(`not a valid ctrl specifier ${ctrl}`);
   }
 }

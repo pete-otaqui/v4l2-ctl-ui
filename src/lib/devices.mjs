@@ -56,8 +56,13 @@ export async function parseSettingsString(rawString) {
       if (type === 'int' || type === 'bool' || type === 'menu') {
         const range = valuesString.split(' ').reduce((obj, kv) => {
           const [k, vS] = kv.split('=');
-          const v = parseInt(vS, 10);
-          obj[k] = v;
+          if (k === 'flags') {
+            const v = (vS === 'inactive');
+            obj.inactive = v;
+          } else {
+            const v = parseInt(vS, 10);
+            obj[k] = v;
+          }
           return obj;
         }, {});
         item = {...item, ...range};
@@ -70,5 +75,10 @@ export async function parseSettingsString(rawString) {
     }
     return acc;
   }, []);
+  settings.sort((a, b) => {
+    if (a.name < b.name) return -1;
+    if (a.name > b.name) return 1;
+    return 0;
+  })
   return settings;
 }

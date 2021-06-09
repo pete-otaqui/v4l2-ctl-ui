@@ -1,6 +1,6 @@
-import tape from 'tape';
+import tape from "tape";
 
-import { parseSettingsString } from './devices.mjs';
+import { parseSettingsString } from "./devices.mjs";
 
 const STRING = `                     brightness 0x00980900 (int)    : min=-64 max=64 step=1 default=0 value=0
 contrast 0x00980901 (int)    : min=0 max=64 step=1 default=32 value=24
@@ -24,48 +24,66 @@ exposure_auto_priority 0x009a0903 (bool)   : default=0 value=1
 focus_absolute 0x009a090a (int)    : min=1 max=1023 step=1 default=280 value=1023
 focus_auto 0x009a090c (bool)   : default=1 value=0`;
 
-tape('Collects correct number of settings', async (t) => {
+tape("Collects correct number of settings", async (t) => {
   const settings = await parseSettingsString(STRING);
   t.equal(settings.length, 16);
   t.end();
 });
 
-tape('Parses ints correctly', async (t) => {
+tape("Parses ints correctly", async (t) => {
   const settings = await parseSettingsString(STRING);
   t.deepEqual(settings[0], {
-    type: 'int',
-    name: 'brightness',
+    type: "int",
+    name: "brightness",
     min: -64,
     max: 64,
     step: 1,
     default: 0,
     value: 0,
   });
+  t.end();
 });
 
-tape('Parses bools correctly', async (t) => {
+tape("Parses bools correctly", async (t) => {
   const settings = await parseSettingsString(STRING);
   t.deepEqual(settings[4], {
-    type: 'bool',
-    name: 'white_balance_temperature_auto',
+    type: "bool",
+    name: "white_balance_temperature_auto",
     default: 1,
     value: 1,
   });
+  t.end();
 });
 
-tape('Parses menus correctly', async (t) => {
+tape("Parses menus correctly", async (t) => {
   const settings = await parseSettingsString(STRING);
   t.deepEqual(settings[7], {
-    type: 'menu',
-    name: 'power_line_frequency',
+    type: "menu",
+    name: "power_line_frequency",
     min: 0,
     max: 2,
     default: 1,
     value: 2,
     options: [
-      { number: 0, value: 'Disabled' },
-      { number: 1, value: '50 Hz' },
-      { number: 2, value: '60 Hz' }
-    ]
+      { number: 0, value: "Disabled" },
+      { number: 1, value: "50 Hz" },
+      { number: 2, value: "60 Hz" },
+    ],
   });
+  t.end();
+});
+
+tape("Parses inactive items correctly", async (t) => {
+  const settings = await parseSettingsString(STRING);
+  t.deepEqual(settings[8], {
+    name: "white_balance_temperature",
+    type: "int",
+    min: 2800,
+    max: 6500,
+    step: 1,
+    default: 4600,
+    value: 4600,
+    inactive: true,
+  });
+  t.end();
 });

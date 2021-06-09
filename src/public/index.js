@@ -9,14 +9,18 @@ async function fetchSettingsData() {
   const response = await fetch('/settings');
   const rawSettingsData = await response.json();
   settingsData = rawSettingsData.settings;
-  console.log('settingsData', settingsData);
 }
 async function sendSetting(name, value) {
-  const response = await fetch(`/settings/${name}`, { method: 'PUT', body: value });
-  const responseData = await response.json();
-  console.log('responseData', responseData);
+  await fetch(`/settings/${name}`, { method: 'PUT', body: value });
+  await fetchSettingsData();
+  createSettingsControls();
 }
 
+function sleep(ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
 
 
 async function updateSettingControl(name, value) {
@@ -28,8 +32,7 @@ async function updateSettingControl(name, value) {
 function createSettingsControls() {
   const form = getForm();
   settingsData.forEach((setting) => {
-    const el = createSettingControl(setting);
-    form.appendChild(el);
+    createSettingControl(setting, form);
   });
   
 }
@@ -38,7 +41,7 @@ function getForm() {
   return document.getElementById('form');
 }
 
-function createSettingControl(setting) {
+function createSettingControl(setting, form) {
   const containerId = `${setting.name}-container`;
   let container = document.getElementById(containerId);
   let label;
@@ -50,6 +53,7 @@ function createSettingControl(setting) {
     container.appendChild(label);
     label.setAttribute('for', setting.name);
     label.textContent = setting.name;
+    form.appendChild(container);
   } else {
     label = container.querySelector('label');
   }
@@ -64,54 +68,61 @@ function createSettingControl(setting) {
       createSettingControlMenu(setting, container);
       break;
   }
-  return container;
+}
+
+function createBasicControl(setting, container, type, getValue) {
+  let control = container.querySelector(type);
+  if (!control) {
+    control = document.createElement(type);
+    control.classList.add('setting-control');
+    control.setAttribute('name', setting.name);
+    control.setAttribute('id', setting.name);
+    control.addEventListener('change', () => {
+      const value = getValue(control);
+      updateSettingControl(setting.name, value);
+    }, false);
+    container.appendChild(control);
+  }
+  if (setting.inactive) {
+    control.setAttribute('readonly', true);
+    control.setAttribute('disabled', true);
+  } else {
+    control.removeAttribute('readonly');
+    control.removeAttribute('disabled');
+  }
+  // control.setAttribute('readonly', setting.inactive ? true : false);
+  // control.setAttribute('disabled', setting.inactive ? true : false);
+  return control;
 }
 
 function createSettingControlInt(setting, container) {
-  const control = document.createElement('input');
-  control.classList.add('setting-control');
+  const control = createBasicControl(setting, container, 'input', (control) => parseInt(control.value, 10));
   control.setAttribute('type', 'range');
-  control.setAttribute('name', setting.name);
-  control.setAttribute('id', setting.name);
   control.setAttribute('min', setting.min);
   control.setAttribute('max', setting.max);
   control.setAttribute('value', setting.value);
-  control.addEventListener('change', () => {
-    const value = parseInt(control.value, 10);
-    updateSettingControl(setting.name, value);
-  }, false);
-  container.appendChild(control);
 }
 function createSettingControlBool(setting, container) {
-  const control = document.createElement('input');
-  control.classList.add('setting-control');
+  const control = createBasicControl(setting, container, 'input', (control) => control.checked ? 1 : 0);
   control.setAttribute('type', 'checkbox');
-  control.setAttribute('name', setting.name);
-  control.setAttribute('id', setting.name);
-  control.setAttribute('checked', setting.value === 1);
-  control.addEventListener('change', () => {
-    const value = control.checked ? 1 : 0;
-    updateSettingControl(setting.name, value);
-  }, false);
-  container.appendChild(control);
+  if (setting.value === 1) {
+    control.setAttribute('checked', true);
+  } else {
+    control.removeAttribute('checked');
+  }
 }
 function createSettingControlMenu(setting, container) {
-  const control = document.createElement('select');
-  control.classList.add('setting-control');
-  control.setAttribute('name', setting.name);
-  control.setAttribute('id', setting.name);
-  setting.options.forEach((settingOption) => {
+  const control = createBasicControl(setting, container, 'select', (control) => parseInt(control.value, 10));
+  control.innerHTML = '';
+  setting.options.forEach((settingOption, index) => {
     const option = document.createElement('option');
     option.setAttribute('value', settingOption.number);
-    option.setAttribute('selected', settingOption.number === setting.value);
+    if (settingOption.number === setting.value) {
+      option.setAttribute('selected', true);
+    }
     option.textContent = settingOption.value
     control.appendChild(option);
-  })
-  control.addEventListener('change', () => {
-    const value = parseInt(control.value, 10);
-    updateSettingControl(setting.name, value);
-  }, false);
-  container.appendChild(control);
+  });
 }
 
 main();
