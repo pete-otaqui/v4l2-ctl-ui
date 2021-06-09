@@ -1,0 +1,27 @@
+{
+  "name": "v4l2-ctl-ui",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "author": "Pete Otaqui <pete@otaqui.com>",
+  "repository": "https://github.com/pete-otaqui/v4l2-ctl-ui",
+  "scripts": {
+    "start": "node ./src/index.mjs",
+    "test": "tape-es ./src/lib/devices.test.mjs"
+  },
+  "engines": {
+    "node": ">= 14.0.0"
+  },
+  "os": [
+    "linux"
+  ],
+  "type": "module",
+  "dependencies": {
+    "fastify": "^3.17.0",
+    "fastify-static": "^4.2.2"
+  },
+  "devDependencies": {
+    "tape": "^5.2.2",
+    "tape-es": "^1.2.15"
+  }
+}
