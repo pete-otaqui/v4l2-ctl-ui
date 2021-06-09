@@ -122,6 +122,7 @@ function createSettingControlInt(setting, form) {
   control.setAttribute('min', setting.min);
   control.setAttribute('max', setting.max);
   control.setAttribute('value', setting.value);
+  control.value = setting.value;
 }
 function createSettingControlBool(setting, form) {
   const control = createBasicControl(setting, form, 'input', (control) => control.checked ? 1 : 0);
