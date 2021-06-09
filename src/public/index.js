@@ -57,7 +57,6 @@ function createSettingControl(setting, form) {
 
 function createBasicControl(setting, form, type, getValue) {
   let label;
-  let defaultValue;
   let control;
   let controlValue;
   let reset;
