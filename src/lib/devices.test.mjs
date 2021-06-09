@@ -62,7 +62,7 @@ tape('Parses menus correctly', async (t) => {
     max: 2,
     default: 1,
     value: 2,
-    values: [
+    options: [
       { number: 0, value: 'Disabled' },
       { number: 1, value: '50 Hz' },
       { number: 2, value: '60 Hz' }

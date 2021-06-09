@@ -36,7 +36,7 @@ export async function parseSettingsString(rawString) {
       if (parts) {
         const [_, number, value] = parts;
         let item = acc[acc.length - 1];
-        item.values.push({ number: parseInt(number, 10), value });
+        item.options.push({ number: parseInt(number, 10), value });
       } else {
         capturingMenu = false;
       }
@@ -58,7 +58,7 @@ export async function parseSettingsString(rawString) {
         item = {...item, ...range};
       }
       if (type === 'menu') {
-        item.values = [];
+        item.options = [];
         capturingMenu = true;
       }
       acc.push(item);

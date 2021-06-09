@@ -1,0 +1,11 @@
+form {
+  width: 30em;
+}
+.setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.setting-control {
+  width: 15em;
+}
