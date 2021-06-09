@@ -3,7 +3,10 @@ html, body, input, select, button {
 }
 
 form {
-  width: 30em;
+  width: 40em;
+  display: grid;
+  grid-template-columns: 1fr 2fr 60px 180px;
+  grid-gap: 12px;
 }
 .setting {
   margin-bottom: 12px;
@@ -14,14 +17,9 @@ form {
 .setting-control {
   width: 15em;
 }
-.reset {
-  background: none!important;
-  border: none;
-  padding: 0!important;
-  color: #069;
-  cursor: pointer;
-  font-size: 1rem;
+.control-value {
+  text-align: right;
 }
-.reset:hover {
-  text-decoration: underline;
+.reset {
+  margin-left: 4em;
 }

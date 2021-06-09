@@ -56,61 +56,53 @@ function createSettingControl(setting, form) {
 }
 
 function createBasicControl(setting, form, type, getValue) {
-  console.log('createBasicControl', setting.name);
-  const containerId = `${setting.name}-container`;
-  let container = document.getElementById(containerId);
-  let meta;
   let label;
-  let values;
+  let defaultValue;
   let control;
-  let controlWrapper;
+  let controlValue;
   let reset;
-  if (!container) {
-    container = document.createElement('div');
-    container.setAttribute('id', containerId);
-    container.classList.add('setting');
-    controlWrapper = document.createElement('div');
-    meta = document.createElement('div');
+  const controlFound = !!document.getElementById(setting.name);
+  if (!controlFound) {
+
     label = document.createElement('label');
-    values = document.createElement('div');
-    reset = document.createElement('button');
-    reset.innerHTML = `Reset: ${setting.default}`;
-    reset.classList.add('reset');
-    values.classList.add('values');
-    meta.classList.add('meta-container');
-    controlWrapper.classList.add('control-container');
-    meta.appendChild(label);
-    meta.appendChild(values);
-    container.appendChild(meta);
     label.setAttribute('for', setting.name);
-    form.appendChild(container);
+    label.setAttribute('data-setting', setting.name);
+    form.appendChild(label);
 
     control = document.createElement(type);
     control.classList.add('setting-control');
+    control.setAttribute('data-setting', setting.name);
     control.setAttribute('name', setting.name);
     control.setAttribute('id', setting.name);
     control.addEventListener('change', () => {
       const value = getValue(control);
       updateSettingControl(setting.name, value);
     }, false);
+    form.appendChild(control);
+
+    controlValue = document.createElement('div');
+    controlValue.classList.add('control-value');
+    controlValue.setAttribute('data-setting', setting.name);
+    form.appendChild(controlValue);
+
+    reset = document.createElement('button');
+    reset.classList.add('reset');
+    reset.setAttribute('data-setting', setting.name);
     reset.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
       updateSettingControl(setting.name, setting.default);
     }, false);
-    controlWrapper.appendChild(control);
-    container.appendChild(controlWrapper);
+    form.appendChild(reset);
   } else {
-    label = container.querySelector('label');
-    values = container.querySelector('.values');
-    control = container.querySelector(type);
-    reset = container.querySelector('.reset');
-    reset.parentNode.removeChild(reset);
+    label = form.querySelector(`label[data-setting="${setting.name}"]`);
+    reset = form.querySelector(`.reset[data-setting="${setting.name}"]`);
+    control = form.querySelector(`${type}[data-setting="${setting.name}"]`);
+    controlValue = form.querySelector(`.control-value[data-setting="${setting.name}"]`);
   }
   label.textContent = `${setting.name}`;
-  values.innerHTML = `cur: ${setting.value}, default ${setting.default}, `;
-  reset.innerHTML = `reset`;
-  values.appendChild(reset);
+  controlValue.innerHTML = setting.value;
+  reset.innerHTML = `reset to ${setting.default}`;
   if (setting.inactive) {
     control.setAttribute('readonly', true);
     control.setAttribute('disabled', true);
