@@ -7,7 +7,8 @@
   "repository": "https://github.com/pete-otaqui/v4l2-ctl-ui",
   "scripts": {
     "start": "node ./src/index.mjs",
-    "test": "tape-es ./src/lib/devices.test.mjs"
+    "test": "tape-es ./src/lib/devices.test.mjs",
+    "lint": "eslint src/ --ext js,mjs"
   },
   "engines": {
     "node": ">= 14.0.0"
@@ -21,6 +22,7 @@
     "fastify-static": "^4.2.2"
   },
   "devDependencies": {
+    "eslint": "^7.28.0",
     "tape": "^5.2.2",
     "tape-es": "^1.2.15"
   }

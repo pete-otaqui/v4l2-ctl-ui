@@ -1,6 +1,6 @@
-import { v4l2CtlListCtrlsMenus, v4l2CtlSetCtrlValue } from './v4l2-ctl.mjs';
+import { v4l2CtlListCtrlsMenus, v4l2CtlSetCtrlValue, v4l2CtlListDevices } from './v4l2-ctl.mjs';
 
-export async function getDevice(deviceId) {
+export async function getDevice(/* deviceId */) {
   return '/dev/video0';
 }
 
@@ -39,6 +39,7 @@ export async function parseSettingsString(rawString) {
     if (capturingMenu) {
       const parts = line.match(/^(\d+):\s+(.*)$/);
       if (parts) {
+        // eslint-disable-next-line no-unused-vars
         const [_, number, value] = parts;
         let item = acc[acc.length - 1];
         item.options.push({ number: parseInt(number, 10), value });
@@ -48,6 +49,7 @@ export async function parseSettingsString(rawString) {
     }
     if (!capturingMenu) {
       const parts = line.match(/^([a-z_]+)\s+0x[0-9a-f]+\s+\(([a-z]+)\)\s+:\s+(.*)$/);
+      // eslint-disable-next-line no-unused-vars
       const [_, name, type, valuesString] = parts;
       let item = {
         name,

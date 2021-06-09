@@ -10,18 +10,12 @@ async function fetchSettingsData() {
   const rawSettingsData = await response.json();
   settingsData = rawSettingsData.settings;
 }
+
 async function sendSetting(name, value) {
   await fetch(`/settings/${name}`, { method: 'PUT', body: value });
   await fetchSettingsData();
   createSettingsControls();
 }
-
-function sleep(ms) {
-  return new Promise(resolve => {
-    setTimeout(resolve, ms);
-  });
-}
-
 
 async function updateSettingControl(name, value) {
   const setting = settingsData.find(s => s.name === name);
@@ -34,7 +28,6 @@ function createSettingsControls() {
   settingsData.forEach((setting) => {
     createSettingControl(setting, form);
   });
-  
 }
 
 function getForm() {
@@ -61,8 +54,8 @@ function createBasicControl(setting, form, type, getValue) {
   let controlValue;
   let reset;
   const controlFound = !!document.getElementById(setting.name);
-  if (!controlFound) {
 
+  if (!controlFound) {
     label = document.createElement('label');
     label.setAttribute('for', setting.name);
     label.setAttribute('data-setting', setting.name);
@@ -99,9 +92,11 @@ function createBasicControl(setting, form, type, getValue) {
     control = form.querySelector(`${type}[data-setting="${setting.name}"]`);
     controlValue = form.querySelector(`.control-value[data-setting="${setting.name}"]`);
   }
+
   label.textContent = `${setting.name}`;
   controlValue.innerHTML = setting.value;
   reset.innerHTML = `reset to ${setting.default}`;
+
   if (setting.inactive) {
     control.setAttribute('readonly', true);
     control.setAttribute('disabled', true);
@@ -109,6 +104,7 @@ function createBasicControl(setting, form, type, getValue) {
     control.removeAttribute('readonly');
     control.removeAttribute('disabled');
   }
+  
   return control;
 }
 
@@ -132,7 +128,7 @@ function createSettingControlBool(setting, form) {
 function createSettingControlMenu(setting, form) {
   const control = createBasicControl(setting, form, 'select', (control) => parseInt(control.value, 10));
   control.innerHTML = '';
-  setting.options.forEach((settingOption, index) => {
+  setting.options.forEach((settingOption) => {
     const option = document.createElement('option');
     option.setAttribute('value', settingOption.number);
     if (settingOption.number === setting.value) {
