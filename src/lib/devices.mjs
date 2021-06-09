@@ -1,4 +1,4 @@
-import { v4l2CtlListCtrlsMenus } from './v4l2-ctl.mjs';
+import { v4l2CtlListCtrlsMenus, v4l2CtlSetCtrlValue } from './v4l2-ctl.mjs';
 
 export async function getDevice(deviceId) {
   return '/dev/video0';
@@ -21,6 +21,11 @@ export async function getSettings(device) {
   const rawString = await v4l2CtlListCtrlsMenus(device);
   const settings = await parseSettingsString(rawString);
   return settings;
+}
+
+export async function updateSetting(name, value) {
+  const device = await getDevice();
+  v4l2CtlSetCtrlValue(device, name, value);
 }
 
 export async function parseSettingsString(rawString) {

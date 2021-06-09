@@ -1,12 +1,31 @@
+let settingsData = [];
+
 async function main() {
+  await fetchSettingsData();
+  createSettingsControls();
+}
+
+async function fetchSettingsData() {
   const response = await fetch('/settings');
-  const settingsData = await response.json();
+  const rawSettingsData = await response.json();
+  settingsData = rawSettingsData.settings;
   console.log('settingsData', settingsData);
-  createSettings(settingsData.settings);
+}
+async function sendSetting(name, value) {
+  const response = await fetch(`/settings/${name}`, { method: 'PUT', body: value });
+  const responseData = await response.json();
+  console.log('responseData', responseData);
 }
 
 
-function createSettings(settingsData) {
+
+async function updateSettingControl(name, value) {
+  const setting = settingsData.find(s => s.name === name);
+  setting.value = value;
+  await sendSetting(name, value);
+}
+
+function createSettingsControls() {
   const form = getForm();
   settingsData.forEach((setting) => {
     const el = createSettingControl(setting);
@@ -20,12 +39,20 @@ function getForm() {
 }
 
 function createSettingControl(setting) {
-  const container = document.createElement('div');
-  container.classList.add('setting');
-  const label = document.createElement('label');
-  label.textContent = setting.name;
-  label.setAttribute('for', setting.name);
-  container.appendChild(label);
+  const containerId = `${setting.name}-container`;
+  let container = document.getElementById(containerId);
+  let label;
+  if (!container) {
+    container = document.createElement('div');
+    container.setAttribute('id', containerId);
+    container.classList.add('setting');
+    label = document.createElement('label');
+    container.appendChild(label);
+    label.setAttribute('for', setting.name);
+    label.textContent = setting.name;
+  } else {
+    label = container.querySelector('label');
+  }
   switch(setting.type) {
     case 'int':
       createSettingControlInt(setting, container);
@@ -50,7 +77,8 @@ function createSettingControlInt(setting, container) {
   control.setAttribute('max', setting.max);
   control.setAttribute('value', setting.value);
   control.addEventListener('change', () => {
-    console.log('change', setting.name, parseInt(control.value, 10));
+    const value = parseInt(control.value, 10);
+    updateSettingControl(setting.name, value);
   }, false);
   container.appendChild(control);
 }
@@ -62,7 +90,8 @@ function createSettingControlBool(setting, container) {
   control.setAttribute('id', setting.name);
   control.setAttribute('checked', setting.value === 1);
   control.addEventListener('change', () => {
-    console.log('change', setting.name, control.checked ? 1 : 0);
+    const value = control.checked ? 1 : 0;
+    updateSettingControl(setting.name, value);
   }, false);
   container.appendChild(control);
 }
@@ -79,7 +108,8 @@ function createSettingControlMenu(setting, container) {
     control.appendChild(option);
   })
   control.addEventListener('change', () => {
-    console.log('change', setting.name, parseInt(control.value, 10));
+    const value = parseInt(control.value, 10);
+    updateSettingControl(setting.name, value);
   }, false);
   container.appendChild(control);
 }

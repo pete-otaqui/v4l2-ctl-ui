@@ -8,7 +8,7 @@ export async function v4l2CtlListDevices() {
 
 export function validateDevice(device) {
   if (!device.match(/^\/dev\/video[0-9]+$/)) {
-    throw new RangeError(`not a valid device specifier ${device}`);
+    throw new RangeError(`not a valid device specifier '${device}'`);
   }
 }
 export function validateCtrl(ctrl) {
@@ -38,6 +38,9 @@ export async function v4l2CtlSetCtrlValue(device, ctrl, value) {
     validateCtrl(ctrl),
     validateValue(value),
   ]);
+  const cmd = `v4l2-ctl --device ${device} -c ${ctrl}=${value}`;
+  const result = await v4l2CtlExec(cmd);
+  return result;
 };
 
 export function v4l2CtlExec(cmd) {
