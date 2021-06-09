@@ -63,11 +63,13 @@ function createBasicControl(setting, form, type, getValue) {
   let label;
   let values;
   let control;
+  let controlWrapper;
   let reset;
   if (!container) {
     container = document.createElement('div');
     container.setAttribute('id', containerId);
     container.classList.add('setting');
+    controlWrapper = document.createElement('div');
     meta = document.createElement('div');
     label = document.createElement('label');
     values = document.createElement('div');
@@ -75,6 +77,8 @@ function createBasicControl(setting, form, type, getValue) {
     reset.innerHTML = `Reset: ${setting.default}`;
     reset.classList.add('reset');
     values.classList.add('values');
+    meta.classList.add('meta-container');
+    controlWrapper.classList.add('control-container');
     meta.appendChild(label);
     meta.appendChild(values);
     container.appendChild(meta);
@@ -94,7 +98,8 @@ function createBasicControl(setting, form, type, getValue) {
       e.stopPropagation();
       updateSettingControl(setting.name, setting.default);
     }, false);
-    container.appendChild(control);
+    controlWrapper.appendChild(control);
+    container.appendChild(controlWrapper);
   } else {
     label = container.querySelector('label');
     values = container.querySelector('.values');
