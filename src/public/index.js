@@ -126,17 +126,21 @@ function createSettingControlBool(setting, form) {
   }
 }
 function createSettingControlMenu(setting, form) {
-  const control = createBasicControl(setting, form, 'select', (control) => parseInt(control.value, 10));
-  control.innerHTML = '';
-  setting.options.forEach((settingOption) => {
-    const option = document.createElement('option');
-    option.setAttribute('value', settingOption.number);
-    if (settingOption.number === setting.value) {
-      option.setAttribute('selected', true);
-    }
-    option.textContent = settingOption.value
-    control.appendChild(option);
-  });
+  if (setting.options.length) {
+    const control = createBasicControl(setting, form, 'select', (control) => parseInt(control.value, 10));
+    control.innerHTML = '';
+    setting.options.forEach((settingOption) => {
+      const option = document.createElement('option');
+      option.setAttribute('value', settingOption.number);
+      if (settingOption.number === setting.value) {
+        option.setAttribute('selected', true);
+      }
+      option.textContent = settingOption.value
+      control.appendChild(option);
+    });
+  } else {
+    return createSettingControlInt(setting, form);
+  }
 }
 
 main();
